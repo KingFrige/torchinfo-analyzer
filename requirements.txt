@@ -1,0 +1,7 @@
+torchstat
+ptflops
+torchsummary
+torchvision
+timm
+matplotlib
+addict
