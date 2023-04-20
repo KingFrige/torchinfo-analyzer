@@ -105,8 +105,6 @@ class Model_param_analyzer():
       for key in layers_frequency_dict:
         frequency_dict[key] = frequency_dict.get(key, 0) + layers_frequency_dict.get(key, 0)
 
-    print("frequency_dict: ", frequency_dict)
-
   def key_frequency(self, frequency_dict:dict, key_index:int=0):
     for table in self.layers_table_list:
       layers_frequency_dict = self.layers_key_frequency(table, key_index)
@@ -124,7 +122,6 @@ class Model_param_analyzer():
 
   def draw_from_dict(self, data_dict, title='title', output_dir='.', sort_item=1):
     by_value = sorted(data_dict.items(),key = lambda item:item[sort_item],reverse=True)
-    print("by_value", by_value)
     x = []
     y = []
     for d in by_value:
