@@ -3,6 +3,7 @@
 import torch
 import torchvision.models as models
 import matplotlib.pyplot as plt
+import numpy
 from utils.torchinfo.torchinfo import summary
 from utils.torchinfo.write_table import write_table
 
@@ -10,8 +11,9 @@ class Model_param_analyzer():
   def __init__(self) -> None:
     self.layers_table_list = []
     self.operator_freq_dict = {}
-    self.fearturemap_freq_dict = {}
+    self.featuremap_freq_dict = {}
     self.kernel_freq_dict = {}
+    self.featuremap_size_freq_dict= {}
 
   def layers_key_frequency(self, model_layers_table:dict, key_index:int=0):
     result_dict = {}
@@ -22,7 +24,7 @@ class Model_param_analyzer():
 
     return result_dict
 
-  def show_freq_statictis(self, operator_freq_dict, kernel_freq_dict, fearturemap_freq_dict):
+  def show_freq_statictis(self, operator_freq_dict, kernel_freq_dict, featuremap_freq_dict, featuremap_size_freq_dict):
     divider = "=" * 50
     summary_str = f'\n     operator_freq_dict: {len(operator_freq_dict)}\n\n'
     sorded_operator_freq = sorted(operator_freq_dict.items(), key=lambda d: d[1], reverse=False)
@@ -36,9 +38,15 @@ class Model_param_analyzer():
       summary_str += f"{key:{30}}: {value:{10}}\n"
     summary_str += divider+ '\n'
 
-    summary_str += f'\n     fearturemap_freq_dict: {len(fearturemap_freq_dict)}\n\n'
-    sorted_fearturemap_freq = sorted(fearturemap_freq_dict.items(), key=lambda d: d[1], reverse=False)
-    for key,value in sorted_fearturemap_freq:
+    summary_str += f'\n     featuremap_freq_dict: {len(featuremap_freq_dict)}\n\n'
+    sorted_featuremap_freq = sorted(featuremap_freq_dict.items(), key=lambda d: d[1], reverse=False)
+    for key,value in sorted_featuremap_freq:
+      summary_str += f"{key:{30}}: {value:{10}}\n"
+    summary_str += divider+ '\n'
+
+    summary_str += f'\n     featuremap_size_freq_dict: {len(featuremap_size_freq_dict)}\n\n'
+    sorted_featuremap_freq = sorted(featuremap_size_freq_dict.items(), key=lambda d: d[0], reverse=False)
+    for key,value in sorted_featuremap_freq:
       summary_str += f"{key:{30}}: {value:{10}}\n"
     summary_str += divider+ '\n'
 
@@ -68,14 +76,36 @@ class Model_param_analyzer():
 
     layers_operator_freq_dict = self.layers_key_frequency(model_layers_table, 0)
     layers_kernel_freq_dict = self.layers_key_frequency(model_layers_table, 1)
-    layers_fearturemap_freq_dict = self.layers_key_frequency(model_layers_table, 2)
-    self.show_freq_statictis(layers_operator_freq_dict, layers_kernel_freq_dict, layers_fearturemap_freq_dict)
+    layers_featuremap_freq_dict = self.layers_key_frequency(model_layers_table, 2)
+    layers_featuremap_size_freq_dict = self.layers_featuremap_size_frequency(model_layers_table)
+    self.show_freq_statictis(layers_operator_freq_dict, layers_kernel_freq_dict, layers_featuremap_freq_dict, layers_featuremap_size_freq_dict)
 
     write_table(model_layers_table, xlsx_file_name, model_name)
     self.layers_table_list.append(model_layers_table)
 
     sys.stdout = savedStdout
     print_log.close()
+
+  def layers_featuremap_size_frequency(self, model_layers_table):
+    result_dict = {}
+    for num, row in enumerate(model_layers_table):
+      if(num == 0) or (row[2] == '--'): # remove HEADER_TITLES and '--'
+        continue
+      import re
+      row_str_list = eval(re.sub("(?P<value>\w+)",lambda x:repr(x.group("value")),row[2]))
+      row_int_list = list(map(int, row_str_list))
+      featuremap_size = numpy.prod(row_int_list)
+      result_dict[featuremap_size] = result_dict.get(featuremap_size, 0) + 1
+
+    return result_dict
+
+  def featuremap_size_frequency(self, frequency_dict):
+    for table in self.layers_table_list:
+      layers_frequency_dict = self.layers_featuremap_size_frequency(table)
+      for key in layers_frequency_dict:
+        frequency_dict[key] = frequency_dict.get(key, 0) + layers_frequency_dict.get(key, 0)
+
+    print("frequency_dict: ", frequency_dict)
 
   def key_frequency(self, frequency_dict:dict, key_index:int=0):
     for table in self.layers_table_list:
@@ -86,18 +116,21 @@ class Model_param_analyzer():
   def analysis_frequency(self)->dict:
     self.key_frequency(frequency_dict=self.operator_freq_dict, key_index=0)
     self.key_frequency(frequency_dict=self.kernel_freq_dict, key_index=1)
-    self.key_frequency(frequency_dict=self.fearturemap_freq_dict, key_index=2)
+    self.key_frequency(frequency_dict=self.featuremap_freq_dict, key_index=2)
+    self.featuremap_size_frequency(frequency_dict=self.featuremap_size_freq_dict)
 
   def show_analysis_statictis(self):
-    self.show_freq_statictis(self.operator_freq_dict, self.kernel_freq_dict, self.fearturemap_freq_dict)
+    self.show_freq_statictis(self.operator_freq_dict, self.kernel_freq_dict, self.featuremap_freq_dict, self.featuremap_size_freq_dict)
 
-  def draw_from_dict(self, data_dict, title='title', output_dir='.'):
-    by_value = sorted(data_dict.items(),key = lambda item:item[1],reverse=True)
+  def draw_from_dict(self, data_dict, title='title', output_dir='.', sort_item=1):
+    by_value = sorted(data_dict.items(),key = lambda item:item[sort_item],reverse=True)
+    print("by_value", by_value)
     x = []
     y = []
     for d in by_value:
       x.append(d[0])
       y.append(d[1])
+    x = list(map(str, x))
 
     fig_height = len(data_dict)*0.4 + 2
     plt.figure(figsize=(20, fig_height))
@@ -113,8 +146,9 @@ class Model_param_analyzer():
 
   def draw_analysis_statictis(self, prefix):
     self.draw_from_dict(self.operator_freq_dict,    prefix+'_operators_frequence',  'output')
-    self.draw_from_dict(self.fearturemap_freq_dict, prefix+'_featuremap_frequency', 'output')
+    self.draw_from_dict(self.featuremap_freq_dict,  prefix+'_featuremap_frequency', 'output')
     self.draw_from_dict(self.kernel_freq_dict,      prefix+'_kernel_frequency',     'output')
+    self.draw_from_dict(self.featuremap_size_freq_dict, prefix+'_featuremap_size_frequency', 'output', 0)
 
 def main():
   data_dict = {'ReLU':289, 'Conv2d':341, 'BatchNorm2d':1565, 'Linear':655, 'AdaptiveAvgPool2d':1337, 'Padding':226, 'MaxPool2d':399, 'Hardswish':967, 'Softmax':405}
