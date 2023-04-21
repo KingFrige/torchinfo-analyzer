@@ -29,6 +29,13 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
+## function
+
+- model parameter generate
+- operators analysis: type / kernel / featuremap size
+- scenario related operator analysis
+- chart display
+
 ## analysis
 
 ```bash
