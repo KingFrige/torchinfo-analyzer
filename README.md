@@ -1,5 +1,12 @@
 # README
 
+## start
+
+```bash
+$ git clone git@gitlab.yizhu.local:guangda.dong/torchinfo-analyzer.git
+
+$ git submodule update --init --recursive
+```
 
 ## require
 
@@ -14,19 +21,19 @@ $ pip install -r requirements.txt
 - Create your virtual environment for `python3`:
 
 ```bash
-python3 -m venv venv
+$ python3 -m venv venv
 ```
    
 - Activate your virtualenv:
 
 ```bash
-source venv/bin/activate
+$ source venv/bin/activate
 ```
 
 - Install dependencies using the `requirements.txt`:
 
 ```bash
-pip install -r requirements.txt
+$ pip install -r requirements.txt
 ```
 
 ## function
