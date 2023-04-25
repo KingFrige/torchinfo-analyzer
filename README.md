@@ -5,6 +5,8 @@
 ```bash
 $ git clone git@gitlab.yizhu.local:guangda.dong/torchinfo-analyzer.git
 
+$ cd torchinfo-analyzer
+
 $ git submodule update --init --recursive
 ```
 
