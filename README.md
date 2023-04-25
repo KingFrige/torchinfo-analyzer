@@ -12,13 +12,13 @@ $ git submodule update --init --recursive
 
 ## require
 
-### Using pip without a virtual environment
+### way 1: Using pip without a virtual environment
 
 ```bash
 $ pip install -r requirements.txt
 ```
 
-### Using a virtual environment with *virtualenv*
+### way 2: Using a virtual environment with *virtualenv*
 
 - Create your virtual environment for `python3`:
 
@@ -45,7 +45,7 @@ $ pip install -r requirements.txt
 - scenario related operator analysis
 - chart display
 
-## analysis
+## usage
 
 ```bash
 $ make analysis-demo-info
