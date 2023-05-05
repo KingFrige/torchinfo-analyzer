@@ -1,35 +1,51 @@
 # README
 
+## start
+
+```bash
+$ git clone git@gitlab.yizhu.local:guangda.dong/torchinfo-analyzer.git
+
+$ cd torchinfo-analyzer
+
+$ git submodule update --init --recursive
+```
 
 ## require
 
-### Using pip without a virtual environment
+### way 1: Using pip without a virtual environment
 
 ```bash
 $ pip install -r requirements.txt
 ```
 
-### Using a virtual environment with *virtualenv*
+### way 2: Using a virtual environment with *virtualenv*
 
 - Create your virtual environment for `python3`:
 
 ```bash
-python3 -m venv venv
+$ python3 -m venv venv
 ```
    
 - Activate your virtualenv:
 
 ```bash
-source venv/bin/activate
+$ source venv/bin/activate
 ```
 
 - Install dependencies using the `requirements.txt`:
 
 ```bash
-pip install -r requirements.txt
+$ pip install -r requirements.txt
 ```
 
-## analysis
+## function
+
+- model parameter generate
+- operators analysis: type / kernel / featuremap size
+- scenario related operator analysis
+- chart display
+
+## usage
 
 ```bash
 $ make analysis-demo-info
