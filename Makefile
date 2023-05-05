@@ -5,6 +5,12 @@ get-reference-repo-dryRun:
 get-reference-repo:
 	python3 ../../scripts/reference-demo-clone-from-github.py --titleName "" --fileName README.md
 
+analysis-demo-info:
+	python src/demo_Res2Net.py
+
+analysis-torch-models-info:
+	python src/analysis_torch_models.py
+
 analysis-classifaction-models-info:
 	python src/analysis_scenario_models.py --nnType 'classifaction'
 analysis-object_detection-models-info:
@@ -24,13 +30,18 @@ analysis-cv_ocr-models-info:
 analysis-evolution-all-models-info:
 	python src/analysis_scenario_models.py --nnType 'all'
 
-analysis-demo-info:
-	python src/demo_Res2Net.py
-
-analysis-torch-models-info:
-	python src/analysis_torch_models.py
-
 regression-test:analysis-demo-info analysis-classifaction-models-info analysis-torch-models-info
+
+analysis-AIBenchmark:
+	python src/analysis_benchmark_models.py --bmType 'AIBenchmark'
+analysis-MLMark:
+	python src/analysis_benchmark_models.py --bmType 'MLMark'
+analysis-MLperf:
+	python src/analysis_benchmark_models.py --bmType 'MLperf'
+analysis-BAWNBench:
+	python src/analysis_benchmark_models.py --bmType 'BAWNBench'
+analysis-all-benchmark:
+	python src/analysis_benchmark_models.py --bmType 'all'
 
 clean:
 	-rm -rf ./output/*
