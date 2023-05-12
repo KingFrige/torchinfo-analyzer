@@ -3,7 +3,7 @@
 ## start
 
 ```bash
-$ git clone git@gitlab.yizhu.local:guangda.dong/torchinfo-analyzer.git
+$ git clone <repo-path>
 
 $ cd torchinfo-analyzer
 
