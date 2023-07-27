@@ -7,3 +7,4 @@ output/pytorch-models-param.xlsx
 src/output/
 *-hist.png
 venv/
+*.xlsx#
