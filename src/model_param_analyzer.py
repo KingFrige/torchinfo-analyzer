@@ -68,7 +68,7 @@ class Model_param_analyzer():
       depth=10,
       device='cpu',
       verbose=1,
-      col_names=["kernel_size","input_size", "output_size", "num_params", "mult_adds"],
+      col_names=["kernel_size","input_size", "output_size", "filter_size", "num_params", "mult_adds"],
       row_settings=["depth"],
     )
 
